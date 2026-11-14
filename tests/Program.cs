@@ -118,8 +118,54 @@ internal static class Program
                 new List<string> { "JudEffTimeInBattle" },
                 50, 5000));
 
+        int hpLimit;
+        CheckBool(
+            "UpdateHpLimit 永久上限：+5",
+            true,
+            KillEffectMath.TryGetPermanentHpLimit(new List<string> { "5" }, out hpLimit));
+        Check("UpdateHpLimit 数值", 5, hpLimit);
+
+        CheckBool(
+            "UpdateHpLimit 第二个参数为 0 仍是永久：+5",
+            true,
+            KillEffectMath.TryGetPermanentHpLimit(new List<string> { "5", "0" }, out hpLimit));
+        Check("UpdateHpLimit 数值（显式 0）", 5, hpLimit);
+
+        CheckBool(
+            "UpdateHpLimit 临时上限（第二个参数 1）不按永久处理",
+            false,
+            KillEffectMath.TryGetPermanentHpLimit(new List<string> { "5", "1" }, out hpLimit));
+
+        CheckBool(
+            "UpdateHpLimit 负数也保留（可能是有代价的功法）",
+            true,
+            KillEffectMath.TryGetPermanentHpLimit(new List<string> { "-5" }, out hpLimit));
+        Check("UpdateHpLimit 负数值", -5, hpLimit);
+
+        CheckBool(
+            "UpdateHpLimit 非法数值：跳过",
+            false,
+            KillEffectMath.TryGetPermanentHpLimit(new List<string> { "abc" }, out hpLimit));
+
+        CheckBool(
+            "UpdateHpLimit 非法临时标记：跳过（游戏 int.Parse 会抛异常）",
+            false,
+            KillEffectMath.TryGetPermanentHpLimit(new List<string> { "5", "x" }, out hpLimit));
+
         Console.WriteLine(failures == 0 ? "全部通过" : string.Format("失败 {0} 项", failures));
         Environment.ExitCode = failures == 0 ? 0 : 1;
+    }
+
+    private static void CheckBool(string name, bool expected, bool actual)
+    {
+        if (expected == actual)
+        {
+            Console.WriteLine("[OK]   " + name + " = " + actual);
+            return;
+        }
+
+        failures++;
+        Console.WriteLine("[FAIL] " + name + "：期望 " + expected + "，实际 " + actual);
     }
 
     private static void Check(string name, int expected, int actual)

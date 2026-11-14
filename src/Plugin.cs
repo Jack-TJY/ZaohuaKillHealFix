@@ -12,8 +12,8 @@ namespace ZaohuaKillHealFix
     public class Plugin : BaseUnityPlugin
     {
         public const string Guid = "zaohua.killhealfix";
-        public const string Name = "境界碾压击杀回血修复";
-        public const string Version = "1.0.0";
+        public const string Name = "境界碾压击杀回血/上限修复";
+        public const string Version = "1.1.0";
 
         internal static ManualLogSource Log;
 
@@ -31,7 +31,7 @@ namespace ZaohuaKillHealFix
                 "通用",
                 "Enabled",
                 true,
-                "是否启用。true = 境界/修为碾压跳过战斗时，补发功法/法宝的击杀回血。");
+                "是否启用。true = 境界/修为碾压跳过战斗时，补发功法/法宝的击杀回血和永久气血上限提升。");
             HudMessage = Config.Bind(
                 "通用",
                 "HudMessage",
@@ -46,12 +46,12 @@ namespace ZaohuaKillHealFix
                 "通用",
                 "SelfTest",
                 true,
-                "配置表加载完后自检一次“夺命杀诀每次击杀回复 100”，结果写进 BepInEx 日志。只写日志，不改存档。");
+                "配置表加载完后自检一次“夺命杀诀 +100/击杀、10041 +1、100400→100401 叠层”，结果写进 BepInEx 日志。只写日志，不改存档。");
             DebugKey = Config.Bind(
                 "通用",
                 "DebugKey",
                 new KeyboardShortcut(KeyCode.F7),
-                "按此键把当前生效的击杀回血效果写进 BepInEx 日志并显示在 HUD，用来确认功法是否被识别。");
+                "按此键把当前生效的击杀回血/气血上限效果写进 BepInEx 日志并显示在 HUD，用来确认功法是否被识别。");
 
             ApplyPatches();
 
@@ -75,7 +75,7 @@ namespace ZaohuaKillHealFix
 
                 var harmony = new Harmony(Guid);
                 harmony.Patch(doDefeat, prefix: new HarmonyMethod(typeof(DoDefeatPatch), nameof(DoDefeatPatch.Prefix)));
-                Log.LogInfo("补丁已应用：BsBattleImpl.DoDefeat(int) -> 境界碾压跳过战斗时补发击杀回血。");
+                Log.LogInfo("补丁已应用：BsBattleImpl.DoDefeat(int) -> 境界碾压跳过战斗时补发击杀回血/气血上限。");
             }
             catch (Exception exception)
             {

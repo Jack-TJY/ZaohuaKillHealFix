@@ -126,6 +126,28 @@ namespace ZaohuaKillHealFix
             return heal > 0 ? heal : 1;
         }
 
+        // UpdateHpLimit,<数值>[,<是否临时>]
+        // 第二个参数为 1 表示只在战斗内临时加，跳过战斗没有承载对象，不算永久提升。
+        internal static bool TryGetPermanentHpLimit(IList<string> parameters, out int value)
+        {
+            value = 0;
+            if (parameters == null || parameters.Count == 0)
+            {
+                return false;
+            }
+
+            if (parameters.Count > 1 && !string.IsNullOrEmpty(parameters[1]))
+            {
+                int tempFlag;
+                if (!int.TryParse(parameters[1], out tempFlag) || tempFlag != 0)
+                {
+                    return false;
+                }
+            }
+
+            return int.TryParse(parameters[0], out value) && value != 0;
+        }
+
         private static bool TryParsePercent(string text, out float percent)
         {
             percent = 0f;
