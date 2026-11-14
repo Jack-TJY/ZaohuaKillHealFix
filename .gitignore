@@ -1,0 +1,7 @@
+# 游戏与 BepInEx 的 dll 不随仓库分发（见 README「构建」）
+lib/
+# 本地构建产物 / 发布包（发布包走 GitHub Releases）
+bin/
+obj/
+dist/
+*.zip
